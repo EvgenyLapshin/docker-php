@@ -1,0 +1,37 @@
+version: '3'
+services:
+  nginx:
+    container_name: ${COMPOSE_PROJECT_NAME}_nginx
+    image: nginx
+    volumes:
+      - ./../${APP_FOLDER}:/var/www/html/${APP_NAME}/
+      - ./../.config/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./../.config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./../.logs/nginx/:/var/log/nginx
+    ports:
+      - ${NGINX_PORT}:80
+    restart: always
+    depends_on:
+      - php
+  php:
+    container_name: ${COMPOSE_PROJECT_NAME}_php
+    build: php
+    ports:
+      - ${PHP_PORT}:9000
+    restart: always
+    volumes:
+      - ./../${APP_FOLDER}:/var/www/html/${APP_NAME}/
+      - ./../.config/php/conf.d/:/usr/local/etc/php/conf.d/
+      - ./../.config/php/www.conf:/usr/local/etc/php-fpm.d/www.conf
+  postgres:
+    container_name: ${COMPOSE_PROJECT_NAME}_postgres
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    ports:
+      - ${POSTGRES_PORT}:5432
+    volumes:
+      - ./../.config/postgres/:/docker-entrypoint-initdb.d/

@@ -1,0 +1,10 @@
+# PHPStorm
+.idea/
+
+# Mac OS
+.DS_Store
+
+# Docker
+.data/
+.logs/
+.config/
